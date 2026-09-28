@@ -70,8 +70,10 @@ func saveTasks() {
 func loadTasks() {
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		// file doesn't exist yet: just stop here
+		return
 	}
 	err = json.Unmarshal(data, &tasks)
-	// check err here, same shape as before
+	if err != nil {
+		fmt.Println(err)
+	}
 }
