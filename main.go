@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -11,6 +12,8 @@ type Task struct {
 	Done bool
 }
 
+const filename = "todos.json"
+
 var tasks []Task
 
 func main() {
@@ -19,6 +22,7 @@ func main() {
 		return
 	}
 
+	loadTasks()
 	switch os.Args[1] {
 	case "add":
 		addTask(os.Args[2:])
@@ -36,6 +40,7 @@ func addTask(args []string) {
 	text := args[0]
 	task := Task{ID: len(tasks) + 1, Text: text}
 	tasks = append(tasks, task)
+	saveTasks()
 	fmt.Println("added:", text)
 }
 func listTasks() {
@@ -50,4 +55,23 @@ func listTasks() {
 		}
 		fmt.Printf("[%s] %d. %s\n", status, t.ID, t.Text)
 	}
+}
+func saveTasks() {
+	data, err := json.MarshalIndent(tasks, "", "  ")
+	if err != nil {
+		fmt.Println("error saving tasks:", err)
+		return
+	}
+	err = os.WriteFile(filename, data, 0644)
+	if err != nil {
+		fmt.Println("error writing file:", err)
+	}
+}
+func loadTasks() {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		// file doesn't exist yet: just stop here
+	}
+	err = json.Unmarshal(data, &tasks)
+	// check err here, same shape as before
 }
