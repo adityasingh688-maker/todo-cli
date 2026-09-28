@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type Task struct {
@@ -28,6 +29,8 @@ func main() {
 		addTask(os.Args[2:])
 	case "list":
 		listTasks()
+	case "done":
+		doneTask(os.Args[2:])
 	default:
 		fmt.Println("unknown command:", os.Args[1])
 	}
@@ -51,7 +54,7 @@ func listTasks() {
 	for _, t := range tasks {
 		status := " "
 		if t.Done {
-			status = "x"
+			status = "X"
 		}
 		fmt.Printf("[%s] %d. %s\n", status, t.ID, t.Text)
 	}
@@ -76,4 +79,24 @@ func loadTasks() {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+func doneTask(args []string) {
+	if len(args) == 0 {
+		fmt.Println("please provide a task ID")
+		return
+	}
+	id, err := strconv.Atoi(args[0])
+	if err != nil {
+		fmt.Println("invalid ID:", args[0])
+		return
+	}
+	for i := range tasks {
+		if tasks[i].ID == id {
+			tasks[i].Done = true
+			saveTasks()
+			fmt.Println("done:", tasks[i].Text)
+			return
+		}
+	}
+	fmt.Println("task not found")
 }
