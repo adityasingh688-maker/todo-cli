@@ -2,15 +2,12 @@ package task
 
 import (
 	"fmt"
-	"strconv"
 )
 
-func AddTask(args []string) {
-	if len(args) == 0 {
-		fmt.Println("please provide a task description")
-		return
+func AddTask(text string) (Task, error) {
+	if text == "" {
+		return Task{}, fmt.Errorf("task description cannot be empty")
 	}
-	text := args[0]
 	maxID := 0
 	for _, t := range tasks {
 		if t.ID > maxID {
@@ -20,61 +17,31 @@ func AddTask(args []string) {
 	task := Task{ID: maxID + 1, Text: text}
 	tasks = append(tasks, task)
 	saveTasks()
-	fmt.Println("added:", text)
+	return task, nil
 }
 
-func ListTasks() {
-	if len(tasks) == 0 {
-		fmt.Println("no tasks yet")
-		return
-	}
-	for _, t := range tasks {
-		status := " "
-		if t.Done {
-			status = "X"
-		}
-		fmt.Printf("[%s] %d. %s\n", status, t.ID, t.Text)
-	}
+func ListTasks() []Task {
+	return tasks
 }
 
-func DoneTask(args []string) {
-	if len(args) == 0 {
-		fmt.Println("please provide a task ID")
-		return
-	}
-	id, err := strconv.Atoi(args[0])
-	if err != nil {
-		fmt.Println("invalid ID:", args[0])
-		return
-	}
+func DoneTask(id int) (Task, error) {
 	for i := range tasks {
 		if tasks[i].ID == id {
 			tasks[i].Done = true
 			saveTasks()
-			fmt.Println("done:", tasks[i].Text)
-			return
+			return tasks[i], nil
 		}
 	}
-	fmt.Println("task not found")
+	return Task{}, fmt.Errorf("task not found")
 }
 
-func DeleteTask(args []string) {
-	if len(args) == 0 {
-		fmt.Println("please provide a task ID")
-		return
-	}
-	id, err := strconv.Atoi(args[0])
-	if err != nil {
-		fmt.Println("invalid ID:", args[0])
-		return
-	}
+func DeleteTask(id int) error {
 	for i := range tasks {
 		if tasks[i].ID == id {
 			tasks = append(tasks[:i], tasks[i+1:]...)
 			saveTasks()
-			fmt.Println("deleted task", id)
-			return
+			return nil
 		}
 	}
-	fmt.Println("task not found")
+	return fmt.Errorf("task not found")
 }

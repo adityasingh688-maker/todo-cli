@@ -1,29 +1,35 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/adityasingh688-maker/todo-cli/task"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("usage: todo <add|list|done|delete> [args]")
-		return
-	}
-
 	task.LoadTasks()
-	switch os.Args[1] {
-	case "add":
-		task.AddTask(os.Args[2:])
-	case "list":
-		task.ListTasks()
-	case "done":
-		task.DoneTask(os.Args[2:])
-	case "delete":
-		task.DeleteTask(os.Args[2:])
-	default:
-		fmt.Println("unknown command:", os.Args[1])
-	}
+
+	r := gin.Default()
+
+	r.GET("/tasks", func(c *gin.Context) {
+		tasks := task.ListTasks()
+		c.JSON(200, tasks)
+	})
+
+	r.POST("/tasks", func(c *gin.Context) {
+		var body struct {
+			Text string `json:"text"`
+		}
+		if err := c.ShouldBindJSON(&body); err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
+		newTask, err := task.AddTask(body.Text)
+		if err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(201, newTask)
+	})
+
+	r.Run(":8080")
 }
