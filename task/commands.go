@@ -1,11 +1,11 @@
-package main
+package task
 
 import (
 	"fmt"
 	"strconv"
 )
 
-func addTask(args []string) {
+func AddTask(args []string) {
 	if len(args) == 0 {
 		fmt.Println("please provide a task description")
 		return
@@ -23,7 +23,7 @@ func addTask(args []string) {
 	fmt.Println("added:", text)
 }
 
-func listTasks() {
+func ListTasks() {
 	if len(tasks) == 0 {
 		fmt.Println("no tasks yet")
 		return
@@ -37,7 +37,7 @@ func listTasks() {
 	}
 }
 
-func doneTask(args []string) {
+func DoneTask(args []string) {
 	if len(args) == 0 {
 		fmt.Println("please provide a task ID")
 		return
@@ -58,7 +58,7 @@ func doneTask(args []string) {
 	fmt.Println("task not found")
 }
 
-func deleteTask(args []string) {
+func DeleteTask(args []string) {
 	if len(args) == 0 {
 		fmt.Println("please provide a task ID")
 		return

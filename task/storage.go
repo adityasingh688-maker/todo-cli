@@ -1,4 +1,4 @@
-package main
+package task
 
 import (
 	"encoding/json"
@@ -18,7 +18,7 @@ func saveTasks() {
 	}
 }
 
-func loadTasks() {
+func LoadTasks() {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return

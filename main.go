@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/adityasingh688-maker/todo-cli/task"
 )
 
 func main() {
@@ -11,16 +13,16 @@ func main() {
 		return
 	}
 
-	loadTasks()
+	task.LoadTasks()
 	switch os.Args[1] {
 	case "add":
-		addTask(os.Args[2:])
+		task.AddTask(os.Args[2:])
 	case "list":
-		listTasks()
+		task.ListTasks()
 	case "done":
-		doneTask(os.Args[2:])
+		task.DoneTask(os.Args[2:])
 	case "delete":
-		deleteTask(os.Args[2:])
+		task.DeleteTask(os.Args[2:])
 	default:
 		fmt.Println("unknown command:", os.Args[1])
 	}
